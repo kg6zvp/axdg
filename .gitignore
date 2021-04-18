@@ -1,0 +1,5 @@
+*.o
+*.ali
+bin/
+build/
+test/bin/
