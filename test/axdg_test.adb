@@ -61,20 +61,24 @@ package body AXDG_Test is
 
 	--Get_Config
 	procedure Test_Should_Allow_Config_Override is
-		Expected : constant String := "urmom/prog_name";
+		Expected : constant String := "build/urmom/prog_name";
 	begin
-		Set("XDG_CONFIG_HOME", "urmom");
+		Helper.Assert_Pre_Directory_Create(Expected);
+		Set("XDG_CONFIG_HOME", "build/urmom");
 		Assert(Expected = AXDG.Get_Config("prog_name"), "Expected """ & Expected & """, got " & AXDG.Get_Config("prog_name"));
 		Clear("XDG_CONFIG_HOME");
+		Helper.Assert_Post_Directory_Create_With_Delete(Expected);
 	end Test_Should_Allow_Config_Override;
 
 	procedure Test_Should_Set_Config_From_Home is
-		Expected : constant String := "/home/me/.config/prog_name";
+		Expected : constant String := "build/home/.config/prog_name";
 		Original_Home : String := Value("HOME");
 	begin
-		Set("HOME", "/home/me/");
+		Helper.Assert_Pre_Directory_Create(Expected);
+		Set("HOME", "build/home");
 		Assert(Expected = AXDG.Get_Config("prog_name"), "Expected """ & Expected & """, got " & AXDG.Get_Config("prog_name"));
 		Set("HOME", Original_Home);
+		Helper.Assert_Post_Directory_Create_With_Delete(Expected);
 	end Test_Should_Set_Config_From_Home;
 
 	procedure Test_Should_Raise_If_No_Home_And_No_Override is
@@ -84,20 +88,24 @@ package body AXDG_Test is
 
 	--Get_Cache
 	procedure Test_Should_Allow_Cache_Override is
-		Expected : constant String := "urmom/prog_name";
+		Expected : constant String := "build/urmom/prog_name";
 	begin
-		Set("XDG_CACHE_HOME", "urmom");
+		Helper.Assert_Pre_Directory_Create(Expected);
+		Set("XDG_CACHE_HOME", "build/urmom");
 		Assert(Expected = AXDG.Get_Cache("prog_name"), "Expected """ & Expected & """, got " & AXDG.Get_Cache("prog_name"));
 		Clear("XDG_CACHE_HOME");
+		Helper.Assert_Post_Directory_Create_With_Delete(Expected);
 	end Test_Should_Allow_Cache_Override;
 
 	procedure Test_Should_Set_Cache_From_Home is
-		Expected : constant String := "/home/me/.cache/prog_name";
+		Expected : constant String := "build/home/.cache/prog_name";
 		Original_Home : String := Value("HOME");
 	begin
-		Set("HOME", "/home/me/");
+		Helper.Assert_Pre_Directory_Create(Expected);
+		Set("HOME", "build/home");
 		Assert(Expected = AXDG.Get_Cache("prog_name"), "Expected """ & Expected & """, got " & AXDG.Get_Cache("prog_name"));
 		Set("HOME", Original_Home);
+		Helper.Assert_Post_Directory_Create_With_Delete(Expected);
 	end Test_Should_Set_Cache_From_Home;
 
 	procedure Test_Should_Raise_If_No_Home_And_No_Cache_Override is
@@ -107,20 +115,24 @@ package body AXDG_Test is
 
 	--Get_Data
 	procedure Test_Should_Allow_Data_Override is
-		Expected : constant String := "urmom/prog_name";
+		Expected : constant String := "build/urmom/prog_name";
 	begin
-		Set("XDG_DATA_HOME", "urmom");
+		Helper.Assert_Pre_Directory_Create(Expected);
+		Set("XDG_DATA_HOME", "build/urmom");
 		Assert(Expected = AXDG.Get_Data("prog_name"), "Expected """ & Expected & """, got " & AXDG.Get_Data("prog_name"));
 		Clear("XDG_DATA_HOME");
+		Helper.Assert_Post_Directory_Create_With_Delete(Expected);
 	end Test_Should_Allow_Data_Override;
 
 	procedure Test_Should_Set_Data_From_Home is
-		Expected : constant String := "/home/me/.local/share/prog_name";
+		Expected : constant String := "build/home/.local/share/prog_name";
 		Original_Home : String := Value("HOME");
 	begin
-		Set("HOME", "/home/me/");
+		Helper.Assert_Pre_Directory_Create(Expected);
+		Set("HOME", "build/home/");
 		Assert(Expected = AXDG.Get_Data("prog_name"), "Expected """ & Expected & """, got " & AXDG.Get_Data("prog_name"));
 		Set("HOME", Original_Home);
+		Helper.Assert_Post_Directory_Create_With_Delete(Expected);
 	end Test_Should_Set_Data_From_Home;
 
 	procedure Test_Should_Raise_If_No_Home_And_No_Data_Override is
@@ -130,20 +142,24 @@ package body AXDG_Test is
 
 	--Get_Runtime
 	procedure Test_Should_Allow_Runtime_Override is
-		Expected : constant String := "urmom/prog_name";
+		Expected : constant String := "build/urmom/prog_name";
 	begin
-		Set("XDG_RUNTIME_DIR", "urmom");
+		Helper.Assert_Pre_Directory_Create(Expected);
+		Set("XDG_RUNTIME_DIR", "build/urmom");
 		Assert(Expected = AXDG.Get_Runtime("prog_name"), "Expected """ & Expected & """, got " & AXDG.Get_Runtime("prog_name"));
 		Clear("XDG_RUNTIME_DIR");
+		Helper.Assert_Post_Directory_Create_With_Delete(Expected);
 	end Test_Should_Allow_Runtime_Override;
 
 	procedure Test_Should_Set_Runtime_From_Cache_As_Fallback is
-		Expected : constant String := "/home/me/.cache/prog_name";
+		Expected : constant String := "build/home/.cache/prog_name";
 		Original_Home : String := Value("HOME");
 	begin
-		Set("HOME", "/home/me/");
+		Helper.Assert_Pre_Directory_Create(Expected);
+		Set("HOME", "build/home/");
 		Assert(Expected = AXDG.Get_Runtime("prog_name"), "Expected """ & Expected & """, got " & AXDG.Get_Runtime("prog_name"));
 		Set("HOME", Original_Home);
+		Helper.Assert_Post_Directory_Create_With_Delete(Expected);
 	end Test_Should_Set_Runtime_From_Cache_As_Fallback;
 
 	procedure Test_Should_Raise_If_No_Home_And_No_Runtime_Override is

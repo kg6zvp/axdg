@@ -1,3 +1,4 @@
+with Ada.Directories; use Ada.Directories;
 with Ada.Environment_Variables; use Ada.Environment_Variables;
 
 package body AXDG is
@@ -19,14 +20,25 @@ package body AXDG is
 		return Output(1..OI);
 	end Strip_Double_Slash;
 
+	function Create_If_Not_Exists(Directory_Path : String) return String is
+	begin
+		if not Ada.Directories.Exists(Directory_Path) then
+			Ada.Directories.Create_Path(Directory_Path);
+		elsif Ada.Directories.Kind(Directory_Path) /= Directory then
+			-- TODO: delete file and create dir
+			null;
+		end if;
+		return Directory_Path;
+	end Create_If_Not_Exists;
+
 	--XDG_CONFIG_HOME or else ${HOME}/.config/<app_name>
 	function Get_Config (Program_Name : String) return String is
 	begin
-		if Exists(VAR_XDG_CONFIG) and then Value(VAR_XDG_CONFIG) /= "" then --XDG set and not empty string
+		if Ada.Environment_Variables.Exists(VAR_XDG_CONFIG) and then Ada.Environment_Variables.Value(VAR_XDG_CONFIG) /= "" then --XDG set and not empty string
 			--XDG Dir set manually
-			return Strip_Double_Slash(Value(VAR_XDG_CONFIG) & "/" & Program_Name);
-		elsif Exists("HOME") and then Value("HOME") /= "" then
-			return Strip_Double_Slash(Value("HOME") & "/.config/" & Program_Name);
+			return Create_If_Not_Exists(Strip_Double_Slash(Value(VAR_XDG_CONFIG) & "/" & Program_Name));
+		elsif Ada.Environment_Variables.Exists("HOME") and then Value("HOME") /= "" then
+			return Create_If_Not_Exists(Strip_Double_Slash(Value("HOME") & "/.config/" & Program_Name));
 		else
 			--raise Not_Enough_Info_Error(""); --TODO
 			return "";
@@ -36,11 +48,11 @@ package body AXDG is
 	--XDG_CACHE_HOME  or else ${HOME}/.cache/<app_name>
 	function Get_Cache  (Program_Name : String) return String is
 	begin
-		if Exists(VAR_XDG_CACHE) and then Value(VAR_XDG_CACHE) /= "" then --XDG set and not empty string
+		if Ada.Environment_Variables.Exists(VAR_XDG_CACHE) and then Value(VAR_XDG_CACHE) /= "" then --XDG set and not empty string
 			--XDG Dir set manually
-			return Strip_Double_Slash(Value(VAR_XDG_CACHE) & "/" & Program_Name);
-		elsif Exists("HOME") and then Value("HOME") /= "" then
-			return Strip_Double_Slash(Value("HOME") & "/.cache/" & Program_Name);
+			return Create_If_Not_Exists(Strip_Double_Slash(Value(VAR_XDG_CACHE) & "/" & Program_Name));
+		elsif Ada.Environment_Variables.Exists("HOME") and then Value("HOME") /= "" then
+			return Create_If_Not_Exists(Strip_Double_Slash(Value("HOME") & "/.cache/" & Program_Name));
 		else
 			--raise Not_Enough_Info_Error(""); --TODO
 			return "";
@@ -50,11 +62,11 @@ package body AXDG is
 	--XDG_DATA_HOME   or else ${HOME}/.local/share/<app_name>
 	function Get_Data   (Program_Name : String) return String is
 	begin
-		if Exists(VAR_XDG_DATA) and then Value(VAR_XDG_DATA) /= "" then --XDG set and not empty string
+		if Ada.Environment_Variables.Exists(VAR_XDG_DATA) and then Value(VAR_XDG_DATA) /= "" then --XDG set and not empty string
 			--XDG Dir set manually
-			return Strip_Double_Slash(Value(VAR_XDG_DATA) & "/" & Program_Name);
-		elsif Exists("HOME") and then Value("HOME") /= "" then
-			return Strip_Double_Slash(Value("HOME") & "/.local/share/" & Program_Name);
+			return Create_If_Not_Exists(Strip_Double_Slash(Value(VAR_XDG_DATA) & "/" & Program_Name));
+		elsif Ada.Environment_Variables.Exists("HOME") and then Value("HOME") /= "" then
+			return Create_If_Not_Exists(Strip_Double_Slash(Value("HOME") & "/.local/share/" & Program_Name));
 		else
 			--raise Not_Enough_Info_Error(""); --TODO
 			return "";
@@ -64,9 +76,9 @@ package body AXDG is
 	--XDG_RUNTIME_DIR or else XDG_CACHE_HOME
 	function Get_Runtime(Program_Name : String) return String is
 	begin
-		if Exists(VAR_XDG_RUNTIME) and then Value(VAR_XDG_RUNTIME) /= "" then --XDG set and not empty string
+		if Ada.Environment_Variables.Exists(VAR_XDG_RUNTIME) and then Value(VAR_XDG_RUNTIME) /= "" then --XDG set and not empty string
 			--XDG Dir set manually
-			return Strip_Double_Slash(Value(VAR_XDG_RUNTIME) & "/" & Program_Name);
+			return Create_If_Not_Exists(Strip_Double_Slash(Value(VAR_XDG_RUNTIME) & "/" & Program_Name));
 		end if;
 		--Fallback to Get_Cache
 		return Get_Cache(Program_Name);
