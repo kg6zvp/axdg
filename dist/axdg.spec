@@ -43,7 +43,7 @@ gprbuild axdg.gpr
 
 %files
 %{_includedir}/%{name}
-%{_libdir}/%{name}.*
+%{_libdir}/%{name}*
 %{_GNAT_project_dir}/*
 
 %changelog
