@@ -7,6 +7,7 @@ before_script:
 stages:
   - build
   - test
+  - fedpackage
 
 build:
   stage: build
@@ -22,6 +23,34 @@ test:
   stage: test
   script:
     - HARDWARE_PLATFORM=x86_64 ./test.sh
+
+fedpackage:
+  stage: fedpackage
+  script:
+    - dnf install -y rpm-build rpmdevtools redhat-rpm-config tree
+    - rpmdev-setuptree
+    - tar -cvzf ../axdg-1.0.tar.gz .
+    - pwd && tree ~/rpmbuild
+    - mv ../axdg-1.0.tar.gz ~/rpmbuild/SOURCES/
+    - tree ~/rpmbuild
+    - cp dist/axdg.spec ~/rpmbuild/SPECS/
+    - pwd && tree ~/rpmbuild
+    - pushd ~/rpmbuild/SPECS/
+    - pwd && tree ~/rpmbuild
+    - HARDWARE_PLATFORM=x86_64 rpmbuild -v -bb axdg.spec
+    - HARDWARE_PLATFORM=x86_64 rpmbuild -v -bs axdg.spec
+    - pwd && tree ~/rpmbuild
+    - popd
+    - pwd && tree ~/rpmbuild
+    - cp -rv ~/rpmbuild/RPMS/* dist/
+    - mkdir -p dist/source
+    - cp -rv ~/rpmbuild/SRPMS/* dist/source/
+  artifacts:
+    paths:
+      - dist/*
+    expire_in: 1 week
+  only:
+    - master
 
 after_script:
   - echo "End CI"
