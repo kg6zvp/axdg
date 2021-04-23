@@ -7,7 +7,9 @@ before_script:
 stages:
   - build
   - test
-  - fedpackage
+  - fed31_package
+  - fed32_package
+  - fed_package
 
 build:
   stage: build
@@ -24,8 +26,52 @@ test:
   script:
     - HARDWARE_PLATFORM=x86_64 ./test.sh
 
+fed31_package:
+  stage: fed31_package
+  image: 'fedora:31'
+  script:
+    - dnf install -y rpm-build rpmdevtools redhat-rpm-config tree
+    - rpmdev-setuptree
+    - tar -cvzf ../axdg-1.0.tar.gz .
+    - mv ../axdg-1.0.tar.gz ~/rpmbuild/SOURCES/
+    - cp dist/axdg.spec ~/rpmbuild/SPECS/
+    - pushd ~/rpmbuild/SPECS/
+    - HARDWARE_PLATFORM=x86_64 rpmbuild -v -bb axdg.spec
+    - HARDWARE_PLATFORM=x86_64 rpmbuild -v -bs axdg.spec
+    - popd
+    - cp -rv ~/rpmbuild/RPMS/* dist/
+    - cp -rv ~/rpmbuild/SRPMS/* dist/
+  artifacts:
+    paths:
+      - dist/*
+    expire_in: 1 week
+  only:
+    - master
+
+fed32_package:
+  stage: fed32_package
+  image: 'fedora:32'
+  script:
+    - dnf install -y rpm-build rpmdevtools redhat-rpm-config tree
+    - rpmdev-setuptree
+    - tar -cvzf ../axdg-1.0.tar.gz .
+    - mv ../axdg-1.0.tar.gz ~/rpmbuild/SOURCES/
+    - cp dist/axdg.spec ~/rpmbuild/SPECS/
+    - pushd ~/rpmbuild/SPECS/
+    - HARDWARE_PLATFORM=x86_64 rpmbuild -v -bb axdg.spec
+    - HARDWARE_PLATFORM=x86_64 rpmbuild -v -bs axdg.spec
+    - popd
+    - cp -rv ~/rpmbuild/RPMS/* dist/
+    - cp -rv ~/rpmbuild/SRPMS/* dist/
+  artifacts:
+    paths:
+      - dist/*
+    expire_in: 1 week
+  only:
+    - master
+
 fedpackage:
-  stage: fedpackage
+  stage: fed_package
   script:
     - dnf install -y rpm-build rpmdevtools redhat-rpm-config tree
     - rpmdev-setuptree
